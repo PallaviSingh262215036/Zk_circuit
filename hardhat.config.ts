@@ -5,6 +5,7 @@ import "hardhat-circom";
 // circuits
 import circuits = require('./circuits.config.json')
 
+import "dotenv/config";
 // set env var to the root of the project
 process.env.BASE_PATH = __dirname;
 
@@ -22,6 +23,20 @@ const config: HardhatUserConfig = {
       }
     ]
   },
+
+  networks: {
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+    },
+    amoy: {
+      url: `https://polygon-amoy.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`, 
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+    }
+  },
+ 
+
+
   circom: {
     // (optional) Base path for input files, defaults to `./circuits/`
     inputBasePath: "./circuits",

@@ -13,7 +13,7 @@ interface ICallData {
   input: BigNumberish[];
 }
 
-const BASE_PATH = "./circuits/multiplier/";
+const BASE_PATH = "./circuits/Multi_NOT_add/";
 
 function p256(n: any): BigNumber {
   let nstr = n.toString(16);
@@ -28,16 +28,17 @@ async function generateCallData(): Promise<ICallData> {
   const proof = unstringifyBigInts(zkProof.proof);
   const pub = unstringifyBigInts(zkProof.publicSignals);
 
-  let inputs = "";
+  /*let inputs = "";
   for (let i = 0; i < pub.length; i++) {
     if (inputs != "") inputs = inputs + ",";
     inputs = inputs + p256(pub[i]);
-  }
+  }*/
 
   let pi_a = [p256(proof.pi_a[0]), p256(proof.pi_a[1])]
   let pi_b = [[p256(proof.pi_b[0][1]), p256(proof.pi_b[0][0])], [p256(proof.pi_b[1][1]), p256(proof.pi_b[1][0])]]
   let pi_c = [p256(proof.pi_c[0]), p256(proof.pi_c[1])]
-  let input = [inputs]
+  //let input = [inputs]
+  let input = pub.map((n: any) => p256(n));
 
   return { pi_a, pi_b, pi_c, input };
 }
@@ -57,7 +58,7 @@ async function generateProof() {
 
   // calculate proof
   const proof = await snarkjs.groth16.prove(
-    BASE_PATH + "out/multiplier.zkey",
+    BASE_PATH + "out/Multi_NOT_add.zkey",
     BASE_PATH + "out/circuit.wtns"
   )
 
@@ -69,7 +70,7 @@ async function generateProof() {
 
 async function main() {
   // deploy contract
-  const Verifier = await ethers.getContractFactory("./contracts/MultiplierVerifier.sol:Verifier");
+  const Verifier = await ethers.getContractFactory("./contracts/MultiNOTAddVerifier.sol:Verifier");
   const verifier = await Verifier.deploy();
   await verifier.deployed();
 
